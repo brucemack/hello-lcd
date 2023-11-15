@@ -21,18 +21,40 @@ public:
     void shift(bool displayShift, bool shiftRight);
     void setCGRAMAddr(uint8_t);
     void setDDRAMAddr(uint8_t);
-    void write(uint8_t);
-    uint8_t read();
-
     bool isBusy() const;
     void waitUntilNotBusy() const;
 
+    /**
+     * Write a byte of data to CGRAM/DDRAM
+    */
+    void write(uint8_t);
+
+    uint8_t read();
+
 protected:
 
-    virtual void writeDR(uint8_t d) = 0;
-    virtual void writeIR(uint8_t d) = 0;
-    virtual uint8_t readDR() = 0;
-    virtual uint8_t readIR() = 0;
+    void _writeDR(uint8_t d);
+    void _writeIR(uint8_t d);
+    uint8_t _readDR();
+    uint8_t _readIR() const;
+
+    /**
+     * Used to write into the IR, regardless of the configuration.
+     * If the interface is running in 4-bit mode then only
+     * the 4 LSBs will be used.
+    */
+    virtual void _writeIR8(uint8_t d) = 0;
+
+    /**
+     * Used to write into the DR, regardless of the configuration.
+     * If the interface is running in 4-bit mode then only
+     * the 4 LSBs will be used.
+    */
+    virtual void _writeDR8(uint8_t d) = 0;
+    
+    virtual uint8_t _readDR8() = 0;
+    virtual uint8_t _readIR8() const = 0;
+    virtual void _waitMs(uint16_t ms) const = 0;
 
 private:
 

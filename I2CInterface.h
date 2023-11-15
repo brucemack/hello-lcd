@@ -6,10 +6,10 @@
 class I2CInterface {
 public:
 
-    I2CInterface();
+    virtual void write(uint8_t addr, uint8_t data) = 0;
+    virtual void write(uint8_t addr, uint8_t* data, uint16_t len) = 0;
+    virtual uint8_t read(uint8_t addr) = 0;
 
-    virtual void write(uint8_t addr, uint8_t data);
-    virtual void write(uint8_t addr, uint8_t* data, uint16_t len);
-}
+};
 
 #endif
