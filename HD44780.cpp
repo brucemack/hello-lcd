@@ -33,25 +33,27 @@ void HD44780::init() {
         }
         _writeIR(word);
     }
-    // 4-bit initialization 
+    // 4-bit initialization. Please remember to send the data on the
+    // LSB side.
     else {
         // 1
         _waitUs(1500);
         // 2
-        _writeIR8(0x30);
+        _writeIR8(0x03);
         // 3
         _waitUs(4100);
         // 4
-        _writeIR8(0x30);
+        _writeIR8(0x03);
         // 5
         _waitUs(100);
         // 6
-        _writeIR8(0x30);
+        _writeIR8(0x03);
         // 7
         _waitUs(100);
         // 8: Switch modes
-        _writeIR8(0x20);
-        // Now we setup the usual way
+        _writeIR8(0x02);
+        // Now we setup the usual way.  We start to use full 8-bit words
+        // here since the send will be split into two.
         uint8_t word = 0x20;
         if (_displayLines == 2) {
             word |= 0x08;
@@ -60,6 +62,7 @@ void HD44780::init() {
             word |= 0x04;
         }
         // This will be split into two writes!
+        _waitUs(100);
         _writeIR(word);
     }
 }

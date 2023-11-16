@@ -8,9 +8,9 @@ TestClockInterface::TestClockInterface() {
 }
 
 void TestClockInterface::sleepMs(uint16_t ms) const {
-    cout << "SLEEP MS " << ms << endl;
+    cout << "SLEEP MS " << dec << ms << endl;
 }
 
 void TestClockInterface::sleepUs(uint16_t us) const {
-    cout << "SLEEP US " << us << endl;
+    cout << "SLEEP US " << dec << us << endl;
 }
