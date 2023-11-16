@@ -70,11 +70,13 @@ void HD44780::init() {
 void HD44780::clearDisplay() {
     waitUntilNotBusy();
     _writeIR(0x01);
+    _waitUs(2000);
 }
 
 void HD44780::returnHome() {
     waitUntilNotBusy();
     _writeIR(0x02);
+    _waitUs(2000);
 }
 
 void HD44780::setEntryMode(bool increment, bool shift) {
@@ -125,21 +127,27 @@ void HD44780::waitUntilNotBusy() const {
     //while (isBusy()) { }
 }
 
-void HD44780::_writeDR(uint8_t d){
+void HD44780::_writeDR(uint8_t d) {
     if (_isFourBit) {
         _writeDR8((d & 0xf0) >> 4);
+        _waitUs(50);
         _writeDR8((d & 0x0f));
+        _waitUs(50);
     } else {
         _writeDR8(d);
+        _waitUs(50);
     }
 }
 
 void HD44780::_writeIR(uint8_t d) {
     if (_isFourBit) {
         _writeIR8((d & 0xf0) >> 4);
+        _waitUs(50);
         _writeIR8((d & 0x0f));
+        _waitUs(50);
     } else {
         _writeIR8(d);
+        _waitUs(50);
     }
 }
 

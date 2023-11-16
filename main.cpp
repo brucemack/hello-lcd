@@ -38,9 +38,9 @@ int main(int argc, const char** argv) {
     sleep_ms(1000);
 
     //TestHD44780 display(false, 2, false, cout);
-    TestI2CInterface i2c(cout);
+    //TestI2CInterface i2c(cout);
     //TestClockInterface clk;
-    //PICOI2CInterface i2c(cout);
+    PICOI2CInterface i2c(cout);
     PICOClockInterface clk;
     uint8_t addr = 0x27;
     // 4-bit interface, 2 rows, 5x8 characters
@@ -64,6 +64,8 @@ int main(int argc, const char** argv) {
     display.setEntryMode(true, false);  // Move sursor, no shift
     cout << "----- Set Display" << endl;
     display.setDisplay(true, true, true);
+    cout << "----- Home" << endl;
+    display.returnHome();
     cout << "----- Set DDRAM Address" << endl;
     display.setDDRAMAddr(0);
     cout << "----- Write H" << endl;
