@@ -22,7 +22,7 @@ uint8_t TestHD44780::_readDR() {
     return 0;
 }
 
-uint8_t TestHD44780::_readIR() const {
+uint8_t TestHD44780::_readIR() {
     // IMPORTANT: Busy flag is clear
     return 0x00;
 }

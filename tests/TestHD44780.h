@@ -19,7 +19,7 @@ protected:
     virtual void _writeIR8(uint8_t d);
     virtual void _writeDR8(uint8_t d);
     virtual uint8_t _readDR();
-    virtual uint8_t _readIR() const;
+    virtual uint8_t _readIR();
     virtual void _waitMs(uint16_t ms) const;
 
 private:

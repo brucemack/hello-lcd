@@ -1,10 +1,23 @@
 #include "HD44780_PCF8574.h"
 
-static const uint8_t BLBit = 0b1000;
-static const uint8_t ENBit = 0b0100;
-static const uint8_t RWBit = 0b0010;
-static const uint8_t RSBit = 0b0001;
+#define BLBIT (0b1000)
+#define ENBIT (0b0100)
+#define RWBIT (0b0010)
+#define RSBIT (0b0001)
 
+/*
+Wiring:
+
+       +-------------------------+
+       |        HD44780          |
+       |                         |
+       | BL EN RW RS D7 D6 D5 D4 |
+          
+       | D3 D2 D1 D0 D7 D6 D5 D4 |         
+       |                         |
+       |         PCF8574         |
+       +-------------------------+       
+*/
 HD44780_PCF8574::HD44780_PCF8574(uint8_t displayLines, bool fontMode,
     uint8_t i2cAddr, I2CInterface* i2c, ClockInterface* clk) 
 :   HD44780(true, displayLines, fontMode), 
@@ -15,23 +28,58 @@ HD44780_PCF8574::HD44780_PCF8574(uint8_t displayLines, bool fontMode,
 
 void HD44780_PCF8574::_write8(bool rsBit, uint8_t d) {
     // Move the LCD data up to the high 4 bits of the I2C data
+    // since this is how the I2C interface is wired to the HD44780.
     uint8_t w0 = d << 4;
-    // Turn on the backlight
+    // Turn on the backlight if requested
     if (_backLight) {
-        w0 |= BLBit;
+        w0 |= BLBIT;
     } 
     // Turn on the RS bit
     if (rsBit) {
-        w0 |= RSBit;
+        w0 |= RSBIT;
     }
-    // Write with EN=0
+    // Write with EN=0.  This is establishing the data before
+    // the enable clock is strobed
     _i2c->write(_i2cAddr, (w0));
-    // Write with EN=1
-    _i2c->write(_i2cAddr, (w0 | ENBit));
-    _clk->sleepUs(1);
-    // Write with EN=0
+    // Write with EN=1.  This is the enable strobe.
+    _i2c->write(_i2cAddr, (w0 | ENBIT));
+    // TODO: IS THIS REALLY NEEDED?  Per datasheet page 52, the 
+    // minimum pulse width (PWeh) is 230ns, which seems way
+    // faster than an I2C cycle.
+    //_clk->sleepUs(1);
+    // Write with EN=0.  This is the trailing edge fo the enable
+    // strobe.
     _i2c->write(_i2cAddr, (w0));
 }
+
+/*
+4 bits of LCD data are returned in the LSB bits of this
+funciton's return.
+*/
+uint8_t HD44780_PCF8574::_read8(bool rsBit) {
+    // Turn on the read bit
+    uint8_t w0 = RWBIT;
+    // Turn on the backlight if requested
+    if (_backLight) {
+        w0 |= BLBIT;
+    } 
+    // Turn on the RS bit
+    if (rsBit) {
+        w0 |= RSBIT;
+    }
+    // Write with EN=0.  This is establishing the data before
+    // the enable clock is strobed
+    _i2c->write(_i2cAddr, (w0));
+    // Write with EN=1.  This is the enable strobe.
+    _i2c->write(_i2cAddr, (w0 | ENBIT));
+    // Now read what is coming out of the LCD
+    uint8_t readW0 = _i2c->read(_i2cAddr);
+    // Write with EN=0.  This is the trailing edge fo the enable
+    // strobe.
+    _i2c->write(_i2cAddr, (w0));
+
+    return (readW0 >> 4) & 0x0f;;
+}    
 
 void HD44780_PCF8574::_writeDR8(uint8_t d) {
     _write8(true, d);
@@ -42,11 +90,11 @@ void HD44780_PCF8574::_writeIR8(uint8_t d) {
 }
 
 uint8_t HD44780_PCF8574::_readDR8() {
-    return 0;
+    return _read8(true);
 }
 
-uint8_t HD44780_PCF8574::_readIR8() const {
-    return 0;
+uint8_t HD44780_PCF8574::_readIR8() {
+    return _read8(false);
 }
 
 void HD44780_PCF8574::_waitUs(uint16_t us) const {

@@ -21,16 +21,17 @@ public:
 
 protected:
 
-    void _write8(bool rsBit, uint8_t d);
-
     virtual void _writeDR8(uint8_t d);
     virtual void _writeIR8(uint8_t d);
     virtual uint8_t _readDR8();
-    virtual uint8_t _readIR8() const;
-    
+    virtual uint8_t _readIR8();
+
     virtual void _waitUs(uint16_t ms) const;
 
 private:
+
+    void _write8(bool rsBit, uint8_t d);
+    uint8_t _read8(bool rsBit);
 
     uint8_t _i2cAddr;
     I2CInterface* _i2c;

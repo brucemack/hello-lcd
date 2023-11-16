@@ -1,26 +1,26 @@
 cmake_minimum_required(VERSION 3.13)
 # OPTIONAL!
-include(pico_sdk_import.cmake)
+#include(pico_sdk_import.cmake)
 project(hello-lcd C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
 # Desktop build
-#add_executable(main-desk
-#  main.cpp HD44780.cpp HD44780_PCF8574.cpp
-#  tests/TestHD44780.cpp 
-#  tests/TestI2CInterface.cpp tests/TestClockInterface.cpp
-#)
+add_executable(main-desk
+  main.cpp HD44780.cpp HD44780_PCF8574.cpp
+  tests/TestHD44780.cpp 
+  tests/TestI2CInterface.cpp tests/TestClockInterface.cpp
+)
 
 # PICO build
-pico_sdk_init()
+#pico_sdk_init()
 
-add_executable(main
-  main.cpp HD44780.cpp HD44780_PCF8574.cpp 
-  tests/TestI2CInterface.cpp
-  pico/PICOI2CInterface.cpp pico/PICOClockInterface.cpp
-)
-pico_enable_stdio_usb(main 1)
-pico_enable_stdio_uart(main 1)
+#add_executable(main
+#  main.cpp HD44780.cpp HD44780_PCF8574.cpp 
+#  tests/TestI2CInterface.cpp
+#  pico/PICOI2CInterface.cpp pico/PICOClockInterface.cpp
+#)
+#pico_enable_stdio_usb(main 1)
+#pico_enable_stdio_uart(main 1)
 
-target_link_libraries(main pico_stdlib hardware_i2c)
+#target_link_libraries(main pico_stdlib hardware_i2c)

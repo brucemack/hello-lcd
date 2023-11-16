@@ -1,5 +1,30 @@
 #include "HD44780.h"
 
+/*
+From Datasheet: 
+
+[Pg 22]
+For 4-bit interface data, only four bus lines (DB4 to DB7) are used for 
+transfer. Bus lines DB0 to DB3 are disabled. The data transfer between 
+the HD44780U and the MPU is completed after the 4-bit data has been 
+transferred twice. As for the order of data transfer, the four high 
+order bits (for 8-bit operation, DB4 to DB7) are transferred before 
+the four low order bits (for 8-bit operation, DB0 to DB3).
+
+Notes On Busy Flag
+------------------
+[Pg 22]
+The busy flag must be checked (one instruction) after the 4-bit data 
+has been transferred twice. Two more 4-bit operations then transfer 
+the busy flag and address counter data.
+
+Figure 09 on page 22 seems to show that there is no need to check
+the busy flag between the MSB and LSB transfers of the 4-bit pair.
+
+The timing specification on page 52 defines tcycE as a minimum of 
+500ns, which seems to be the fundeamental cycle time of the system.
+And the minimum enable pulse width is 230ns. 
+*/
 HD44780::HD44780(bool isFourBit, uint8_t displayLines, bool fontMode) 
 :   _isFourBit(isFourBit),
     _displayLines(displayLines),
@@ -70,13 +95,15 @@ void HD44780::init() {
 void HD44780::clearDisplay() {
     waitUntilNotBusy();
     _writeIR(0x01);
-    _waitUs(2000);
+    // REMOVED - USING BUSY CHECK
+    //_waitUs(2000);
 }
 
 void HD44780::returnHome() {
     waitUntilNotBusy();
     _writeIR(0x02);
-    _waitUs(2000);
+    // REMOVED - USING BUSY CHECK
+    //_waitUs(2000);
 }
 
 void HD44780::setEntryMode(bool increment, bool shift) {
@@ -116,44 +143,48 @@ uint8_t HD44780::read() {
     return _readDR();
 }
 
-bool HD44780::isBusy() const {
+bool HD44780::isBusy() {
     return (_readIR() & 0x80) != 0;
 }
 
 // TODO: CONSIDER A TIMEOUT FEATURE
-void HD44780::waitUntilNotBusy() const {
-    // TEMP
-    _waitUs(100);
-    //while (isBusy()) { }
+void HD44780::waitUntilNotBusy() {
+    while (isBusy()) { }
 }
 
 void HD44780::_writeDR(uint8_t d) {
     if (_isFourBit) {
         _writeDR8((d & 0xf0) >> 4);
-        _waitUs(50);
+        // REMOVED - USING BUSY CHECK
+        //_waitUs(50);
         _writeDR8((d & 0x0f));
-        _waitUs(50);
+        // REMOVED - USING BUSY CHECK
+        //_waitUs(50);
     } else {
         _writeDR8(d);
-        _waitUs(50);
+        // REMOVED - USING BUSY CHECK
+        //_waitUs(50);
     }
 }
 
 void HD44780::_writeIR(uint8_t d) {
     if (_isFourBit) {
         _writeIR8((d & 0xf0) >> 4);
-        _waitUs(50);
+        // REMOVED - USING BUSY CHECK
+        //_waitUs(50);
         _writeIR8((d & 0x0f));
-        _waitUs(50);
+        // REMOVED - USING BUSY CHECK
+        //_waitUs(50);
     } else {
         _writeIR8(d);
-        _waitUs(50);
+        // REMOVED - USING BUSY CHECK
+        //_waitUs(50);
     }
 }
 
 uint8_t HD44780::_readDR() {
     if (_isFourBit) {
-        uint8_t result = _readDR8() << 4;
+        uint8_t result = (_readDR8() << 4) & 0xf0;
         result |= _readDR8() & 0x0f;
         return result;
     } else {
@@ -161,7 +192,7 @@ uint8_t HD44780::_readDR() {
     }
 }
 
-uint8_t HD44780::_readIR() const {
+uint8_t HD44780::_readIR() {
     if (_isFourBit) {
         uint8_t result = _readIR8() << 4;
         result |= _readIR8() & 0x0f;

@@ -21,8 +21,8 @@ public:
     void shift(bool displayShift, bool shiftRight);
     void setCGRAMAddr(uint8_t);
     void setDDRAMAddr(uint8_t);
-    bool isBusy() const;
-    void waitUntilNotBusy() const;
+    bool isBusy();
+    void waitUntilNotBusy();
 
     /**
      * Write a byte of data to CGRAM/DDRAM
@@ -36,7 +36,7 @@ protected:
     void _writeDR(uint8_t d);
     void _writeIR(uint8_t d);
     uint8_t _readDR();
-    uint8_t _readIR() const;
+    uint8_t _readIR();
 
     /**
      * Used to write into the IR, regardless of the configuration.
@@ -53,8 +53,8 @@ protected:
     virtual void _writeDR8(uint8_t d) = 0;
 
     virtual uint8_t _readDR8() = 0;
-    virtual uint8_t _readIR8() const = 0;
-    
+    virtual uint8_t _readIR8() = 0;
+
     virtual void _waitUs(uint16_t ms) const = 0;
 
 private:
