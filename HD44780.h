@@ -25,13 +25,47 @@ public:
     void waitUntilNotBusy();
 
     /**
-     * Write a byte of data to CGRAM/DDRAM
+     * Write a byte of data to CGRAM/DDRAM at the currently
+     * selected address.
+     * 
+     * IMPORTANT: This is a "raw" write, meaning that the 
+     * display will not be filled linearly, depending on
+     * the mapping of the addresses to the screen positions.
     */
-    void write(uint8_t);
+    void write(uint8_t data);
+
+    /**
+     * Writes multiple data bytes. The assumption here is that 
+     * the address is setup to increment. By default this 
+     * just loops and calls single-byte write().
+     * 
+     * IMPORTANT: This is a "raw" write, meaning that the 
+     * display will not be filled linearly, depending on
+     * the mapping of the addresses to the screen positions.
+    */
+    virtual void write(uint8_t* data, uint16_t len);
 
     uint8_t read();
 
+    uint16_t getBusyCount() const { return _busyCount; };
+
+    enum Format { FMT_20x4 };
+
+    /**
+     * A utility function that will write all of the data into 
+     * the display buffer in a "linear" fashion, meaing that the
+     * quirks of the layout will be resolved automatically.
+    */
+    void writeLinear(Format format, 
+        uint8_t* data, uint8_t len, uint8_t startPos);
+
 protected:
+
+    /**
+     * A utility function that knows how to convert a linear 
+     * position to an address in the LCD data memory.
+    */
+    static uint8_t _linearPosToAddr(Format format, uint8_t pos);
 
     void _writeDR(uint8_t d);
     void _writeIR(uint8_t d);
@@ -62,6 +96,7 @@ private:
     const bool _isFourBit;
     const uint8_t _displayLines;
     const bool _fontMode;
+    uint16_t _busyCount = 0;
 };
 
 #endif

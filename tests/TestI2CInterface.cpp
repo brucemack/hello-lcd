@@ -30,6 +30,7 @@ static void formatLowData(uint8_t loData, ostream& str) {
 }
 
 void TestI2CInterface::write(uint8_t addr, uint8_t data) {
+    _cycleCount++;
     ios_base::fmtflags flags(_str.flags());
     uint8_t hiData = (data & 0xf0) >> 4;
     uint8_t loData = (data & 0x0f);
@@ -44,6 +45,7 @@ void TestI2CInterface::write(uint8_t addr, uint8_t data) {
 }
 
 void TestI2CInterface::write(uint8_t addr, uint8_t* data, uint16_t len) {
+    _cycleCount++;
     ios_base::fmtflags flags(_str.flags());
     _str << "I2C WRITE ADDR " << setfill('0') << setw(2) << hex << (int)addr;
     _str << endl;
@@ -60,6 +62,7 @@ void TestI2CInterface::write(uint8_t addr, uint8_t* data, uint16_t len) {
 
 uint8_t TestI2CInterface::read(uint8_t addr) {
     ios_base::fmtflags flags(_str.flags());
+    _cycleCount++;
     _str << "I2C READ  ADDR " << setfill('0') << setw(2) << hex << (int)addr;
     _str << endl << dec;
     _str.flags(flags);

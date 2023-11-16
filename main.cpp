@@ -59,7 +59,7 @@ int main(int argc, const char** argv) {
     display.setDisplay(false, false, false);
     cout << "----- Clear" << endl;
     display.clearDisplay();
-    /*
+    
     cout << "----- Set Entry Mode" << endl;
     display.setEntryMode(true, false);  // Move sursor, no shift
     cout << "----- Set Display" << endl;
@@ -68,13 +68,11 @@ int main(int argc, const char** argv) {
     display.returnHome();
     cout << "----- Set DDRAM Address" << endl;
     display.setDDRAMAddr(0);
-    cout << "----- Write H" << endl;
-    display.write(0x48); // H
-    cout << "----- Write I" << endl;
-    display.write(0x49); // I
-    cout << "----- Write I" << endl;
-    display.write(0x50); // I
-    */
+    // This is an important test - it should demonstrate a wrap-around
+    cout << "----- Write Message" << endl;
+    display.writeLinear(HD44780::Format::FMT_20x4, (uint8_t*)"HI!", 3, 18);
+
+    cout << "I2C cycles: " << i2c.getCycleCount() << endl;
 
     //while (1) {
     //    gpio_put(LED_PIN, 0);

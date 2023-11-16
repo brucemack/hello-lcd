@@ -17,9 +17,12 @@ public:
     virtual void write(uint8_t addr, uint8_t* data, uint16_t len);
     virtual uint8_t read(uint8_t addr);
 
+    uint16_t getCycleCount() const { return _cycleCount; };
+
 private:
 
     std::ostream& _str;
+    uint16_t _cycleCount = 0;
 };
 
 #endif
