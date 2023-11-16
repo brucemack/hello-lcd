@@ -72,6 +72,8 @@ int main(int argc, const char** argv) {
     display.write(0x48); // H
     cout << "----- Write I" << endl;
     display.write(0x49); // I
+    cout << "----- Write I" << endl;
+    display.write(0x50); // I
     
     while (1) {
         gpio_put(LED_PIN, 0);
