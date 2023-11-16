@@ -9,13 +9,20 @@ HD44780::HD44780(bool isFourBit, uint8_t displayLines, bool fontMode)
 void HD44780::init() {
     // 8-bit initialization sequence
     if (!_isFourBit) {
-        _waitMs(15);
+        // 1
+        _waitUs(15000);
+        // 2
         _writeIR8(0x30);
-        _waitMs(5);
+        // 3
+        _waitUs(4100);
+        // 4
         _writeIR8(0x30);
-        _waitMs(1);
+        // 5
+        _waitUs(100);
+        // 6
         _writeIR8(0x30);
-        _waitMs(1);
+        // 7
+        _waitUs(100);
         // Now we setup the usual way
         uint8_t word = 0x30;
         if (_displayLines == 2) {
@@ -28,15 +35,22 @@ void HD44780::init() {
     }
     // 4-bit initialization 
     else {
-        _waitMs(15);
+        // 1
+        _waitUs(1500);
+        // 2
         _writeIR8(0x30);
-        _waitMs(5);
+        // 3
+        _waitUs(4100);
+        // 4
         _writeIR8(0x30);
-        _waitMs(1);
+        // 5
+        _waitUs(100);
+        // 6
         _writeIR8(0x30);
-        // Switch modes
+        // 7
+        _waitUs(100);
+        // 8: Switch modes
         _writeIR8(0x20);
-        _waitMs(10);
         // Now we setup the usual way
         uint8_t word = 0x20;
         if (_displayLines == 2) {
@@ -45,6 +59,7 @@ void HD44780::init() {
         if (_fontMode) {
             word |= 0x04;
         }
+        // This will be split into two writes!
         _writeIR(word);
     }
 }
@@ -102,6 +117,8 @@ bool HD44780::isBusy() const {
 
 // TODO: CONSIDER A TIMEOUT FEATURE
 void HD44780::waitUntilNotBusy() const {
+    // TEMP
+    _waitUs(100);
     //while (isBusy()) { }
 }
 
@@ -142,4 +159,3 @@ uint8_t HD44780::_readIR() const {
         return _readIR8();
     }
 }
-

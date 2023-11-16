@@ -26,7 +26,6 @@ void TestI2CInterface::write(uint8_t addr, uint8_t* data, uint16_t len) {
     _str << "]" << endl;
 }
 
-
 uint8_t TestI2CInterface::read(uint8_t addr) {
     return 0;
 }

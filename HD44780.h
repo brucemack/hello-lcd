@@ -51,10 +51,11 @@ protected:
      * the 4 LSBs will be used.
     */
     virtual void _writeDR8(uint8_t d) = 0;
-    
+
     virtual uint8_t _readDR8() = 0;
     virtual uint8_t _readIR8() const = 0;
-    virtual void _waitMs(uint16_t ms) const = 0;
+    
+    virtual void _waitUs(uint16_t ms) const = 0;
 
 private:
 
