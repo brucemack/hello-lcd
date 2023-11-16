@@ -17,6 +17,7 @@ pico_sdk_init()
 
 add_executable(main
   main.cpp HD44780.cpp HD44780_PCF8574.cpp 
+  tests/TestI2CInterface.cpp
   pico/PICOI2CInterface.cpp pico/PICOClockInterface.cpp
 )
 pico_enable_stdio_usb(main 1)
