@@ -151,6 +151,7 @@ uint8_t HD44780::read() {
     return _readDR();
 }
 
+// TODO: DEBUG THIS - NOT WORKING?
 bool HD44780::isBusy() {
     return (_readIR() & 0x80) != 0;
 }
@@ -172,23 +173,15 @@ void HD44780::_writeDR(uint8_t d) {
         //_waitUs(50);
     } else {
         _writeDR8(d);
-        // REMOVED - USING BUSY CHECK
-        //_waitUs(50);
     }
 }
 
 void HD44780::_writeIR(uint8_t d) {
     if (_isFourBit) {
         _writeIR8((d & 0xf0) >> 4);
-        // REMOVED - USING BUSY CHECK
-        //_waitUs(50);
         _writeIR8((d & 0x0f));
-        // REMOVED - USING BUSY CHECK
-        //_waitUs(50);
     } else {
         _writeIR8(d);
-        // REMOVED - USING BUSY CHECK
-        //_waitUs(50);
     }
 }
 

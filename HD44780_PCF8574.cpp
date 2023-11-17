@@ -78,7 +78,7 @@ uint8_t HD44780_PCF8574::_read8(bool rsBit) {
     // strobe.
     _i2c->write(_i2cAddr, (w0));
 
-    return (readW0 >> 4) & 0x0f;;
+    return (readW0 >> 4) & 0x0f;
 }    
 
 void HD44780_PCF8574::_writeDR8(uint8_t d) {
