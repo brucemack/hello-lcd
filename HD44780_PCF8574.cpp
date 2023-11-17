@@ -75,7 +75,7 @@ then the master will read the value of 0.
 uint8_t HD44780_PCF8574::_read8(bool rsBit) {
     // Turn on the read bit and keep the 4 data bits high to 
     // allow reading.
-    uint8_t w0 = 0b1111 | RWBIT;
+    uint8_t w0 = 0b11110000 | RWBIT;
     // Turn on the backlight if requested
     if (_backLight) {
         w0 |= BLBIT;

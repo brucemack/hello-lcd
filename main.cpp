@@ -77,10 +77,6 @@ int main(int argc, const char** argv) {
     // This is an important test - it should demonstrate a wrap-around
     cout << "----- Write Message" << endl;
     display.writeLinear(HD44780::Format::FMT_20x4, (uint8_t*)"Hi Izzy and Henry!", 18, 0);
-    cout << "----- Clear" << endl;
-    display.clearDisplay();
-    cout << "----- Write Message" << endl;
-    display.writeLinear(HD44780::Format::FMT_20x4, (uint8_t*)"Hi Izzy and Henry!", 18, 0);
 
     cout << "I2C cycles: " << i2c.getCycleCount() << endl;
     cout << "Busy Count: " << display.getBusyCount() << endl;

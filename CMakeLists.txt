@@ -18,11 +18,3 @@ pico_enable_stdio_uart(main 1)
 target_compile_definitions(main PUBLIC PICO_BUILD=1)
 
 target_link_libraries(main pico_stdlib hardware_i2c)
-
-# Desktop build
-add_executable(main-desk
-  main.cpp HD44780.cpp HD44780_PCF8574.cpp
-  tests/TestHD44780.cpp 
-  tests/TestI2CInterface.cpp tests/TestClockInterface.cpp
-)
-
