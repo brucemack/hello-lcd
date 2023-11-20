@@ -224,6 +224,11 @@ void HD44780::writeLinear(Format format,
     }
 }
 
+void HD44780::setCursorLinear(Format format, uint8_t pos) {
+    uint8_t addr = _linearPosToAddr(format, pos);
+    setDDRAMAddr(addr);
+}
+
 uint8_t HD44780::_rowToBaseAddr(Format format, uint8_t linearRow) {
     if (format == Format::FMT_20x4) {
         if (linearRow == 0) {
