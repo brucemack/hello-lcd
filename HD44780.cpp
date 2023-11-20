@@ -199,7 +199,7 @@ uint8_t HD44780::_readIR() {
 }
 
 void HD44780::writeLinear(Format format, 
-    uint8_t* data, uint8_t len, uint8_t startPos) {
+    const uint8_t* data, uint8_t len, uint8_t startPos) {
     uint8_t lastAddr = 0;
     // Cycle across the data provided
     for (uint8_t i = 0; i < len; i++) {

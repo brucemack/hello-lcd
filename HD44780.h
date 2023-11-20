@@ -57,7 +57,7 @@ public:
      * quirks of the layout will be resolved automatically.
     */
     void writeLinear(Format format, 
-        uint8_t* data, uint8_t len, uint8_t startPos);
+        const uint8_t* data, uint8_t len, uint8_t startPos);
 
     void setCursorLinear(Format format, uint8_t pos);
 
