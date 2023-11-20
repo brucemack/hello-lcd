@@ -91,6 +91,7 @@ int main(int argc, const char** argv) {
         (uint8_t*)testPattern, 80, 0);
     uint32_t end = get_us();
     display.setCursor(HD44780::Format::FMT_20x4, 0, 0);
+    display.setCursorLinear(HD44780::Format::FMT_20x4, 22);
     
     cout << "I2C cycles: " << i2c.getCycleCount() << endl;
     cout << "Busy Count: " << display.getBusyCount() << endl;
