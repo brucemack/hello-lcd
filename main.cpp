@@ -45,7 +45,7 @@ int main(int argc, const char** argv) {
 
     //TestHD44780 display(false, 2, false, cout);
 #ifdef PICO_BUILD
-    PICOI2CInterface i2c(cout);
+    PICOI2CInterface i2c(i2c0, cout);
     PICOClockInterface clk;
 #else
     TestI2CInterface i2c(cout);
