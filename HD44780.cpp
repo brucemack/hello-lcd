@@ -98,15 +98,11 @@ void HD44780::init() {
 void HD44780::clearDisplay() {
     waitUntilNotBusy();
     _writeIR(0x01);
-    // REMOVED - USING BUSY CHECK
-    //_waitUs(2000);
 }
 
 void HD44780::returnHome() {
     waitUntilNotBusy();
     _writeIR(0x02);
-    // REMOVED - USING BUSY CHECK
-    //_waitUs(2000);
 }
 
 void HD44780::setEntryMode(bool increment, bool shift) {
@@ -137,7 +133,9 @@ void HD44780::setDDRAMAddr(uint8_t a) {
 }
 
 void HD44780::write(uint8_t d) {
-    waitUntilNotBusy();
+    // Removing ths since it doesn't appear that the busy flag
+    // is relevent to data writes.
+    // waitUntilNotBusy();
     _writeDR(d);
 }
 
@@ -151,7 +149,6 @@ uint8_t HD44780::read() {
     return _readDR();
 }
 
-// TODO: DEBUG THIS - NOT WORKING?
 bool HD44780::isBusy() {
     return (_readIR() & 0x80) != 0;
 }
@@ -166,11 +163,7 @@ void HD44780::waitUntilNotBusy() {
 void HD44780::_writeDR(uint8_t d) {
     if (_isFourBit) {
         _writeDR8((d & 0xf0) >> 4);
-        // REMOVED - USING BUSY CHECK
-        //_waitUs(50);
         _writeDR8((d & 0x0f));
-        // REMOVED - USING BUSY CHECK
-        //_waitUs(50);
     } else {
         _writeDR8(d);
     }
@@ -231,24 +224,30 @@ void HD44780::writeLinear(Format format,
     }
 }
 
+uint8_t HD44780::_rowToBaseAddr(Format format, uint8_t linearRow) {
+    if (format == Format::FMT_20x4) {
+        if (linearRow == 0) {
+            return 0;
+        } else if (linearRow == 1) {
+            return 0x40;
+        } else if (linearRow == 2) {
+            return 0x14;
+        } else if (linearRow == 3) {
+            return 0x54;
+        } else {
+            return 0;
+        }
+    } else {
+        return 0;
+    }
+}
+
 uint8_t HD44780::_linearPosToAddr(Format format, uint8_t pos) {
     if (format == Format::FMT_20x4) {
         const uint8_t cols = 20;
-        uint8_t linearRow = pos / cols;
-        uint8_t col = pos % cols;
-        uint8_t baseAddr = 0;
-        if (linearRow == 0) {
-            baseAddr = 0;
-        } else if (linearRow == 1) {
-            baseAddr = 0x40;
-        } else if (linearRow == 2) {
-            baseAddr = 0x14;
-        } else if (linearRow == 3) {
-            baseAddr = 0x54;
-        } else {
-            // CONSIDER ERROR HANDLING METHOD
-            baseAddr = 0;
-        }
+        const uint8_t linearRow = pos / cols;
+        const uint8_t col = pos % cols;
+        const uint8_t baseAddr = _rowToBaseAddr(format, linearRow);
         return baseAddr + col;
     } 
     else {
@@ -257,3 +256,6 @@ uint8_t HD44780::_linearPosToAddr(Format format, uint8_t pos) {
     }
 }
 
+void HD44780::setCursor(Format format, uint8_t row, uint8_t col) {
+    setDDRAMAddr(_rowToBaseAddr(format, row) + col);
+}

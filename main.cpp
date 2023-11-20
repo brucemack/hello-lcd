@@ -22,6 +22,13 @@
 
 using namespace std;
 
+uint32_t get_us() {
+    absolute_time_t at = get_absolute_time();
+    return to_us_since_boot(at);
+}
+
+const char* testPattern = "0123456789ABCDEF01230123456789ABCDEF01230123456789ABCDEF01230123456789ABCDEF0123";
+
 int main(int argc, const char** argv) {
 
 #ifdef PICO_BUILD
@@ -75,11 +82,19 @@ int main(int argc, const char** argv) {
     cout << "----- Set DDRAM Address" << endl;
     display.setDDRAMAddr(0);
     // This is an important test - it should demonstrate a wrap-around
-    cout << "----- Write Message" << endl;
-    display.writeLinear(HD44780::Format::FMT_20x4, (uint8_t*)"Hi Izzy and Henry!", 18, 0);
 
+    cout << "----- Write Message" << endl;
+    uint32_t start = get_us();
+    //display.writeLinear(HD44780::Format::FMT_20x4, 
+    //    (uint8_t*)"Hi Izzy and Henry! This is a test.", 34, 0);
+    display.writeLinear(HD44780::Format::FMT_20x4, 
+        (uint8_t*)testPattern, 80, 0);
+    uint32_t end = get_us();
+    display.setCursor(HD44780::Format::FMT_20x4, 0, 0);
+    
     cout << "I2C cycles: " << i2c.getCycleCount() << endl;
     cout << "Busy Count: " << display.getBusyCount() << endl;
+    cout << "Time: " << (end - start) << endl;
 
     // Prevent exit
     while (1) { }

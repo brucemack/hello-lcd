@@ -59,7 +59,18 @@ public:
     void writeLinear(Format format, 
         uint8_t* data, uint8_t len, uint8_t startPos);
 
+    void setCursorLinear(Format format, uint8_t pos);
+
+    /**
+     * A utilty function that sets the cursor in the specified
+     * location taking into account the strnage wrapping that 
+     * may happen in the display layout. 
+     */
+    void setCursor(Format format, uint8_t row, uint8_t col);
+
 protected:
+
+    static uint8_t _rowToBaseAddr(Format format, uint8_t linearRow);
 
     /**
      * A utility function that knows how to convert a linear 
