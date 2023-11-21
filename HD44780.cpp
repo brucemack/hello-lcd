@@ -218,7 +218,10 @@ void HD44780::writeLinear(Format format,
             lastAddr = addr;
         }
         // Write the data
-        write(data[i]);
+        if (data[i] != 0)
+            write(data[i]);
+        else 
+            write(' ');
         // Assume the address is incremented automatically
         lastAddr++;
     }
