@@ -25,6 +25,7 @@ protected:
     virtual void _writeIR8(uint8_t d);
     virtual uint8_t _readDR8();
     virtual uint8_t _readIR8();
+    virtual void _writeDR8Multi(const uint8_t* d, uint16_t dLen);
 
     virtual void _waitUs(uint16_t ms) const;
 
