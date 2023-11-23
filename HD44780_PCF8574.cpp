@@ -17,6 +17,13 @@ Wiring:
        |                         |
        |         PCF8574         |
        +-------------------------+       
+
+NOTE: [Page 8]
+
+The master can then send a STOP or ReSTART condition or continue sending data. 
+The number of data bytes that can be sent successively is not limited and the 
+previous data is overwritten every time a data byte has been sent and 
+acknowledged.
 */
 HD44780_PCF8574::HD44780_PCF8574(uint8_t displayLines, bool fontMode,
     uint8_t i2cAddr, I2CInterface* i2c, ClockInterface* clk) 
@@ -43,13 +50,35 @@ void HD44780_PCF8574::_write8(bool rsBit, uint8_t d) {
     _i2c->write(_i2cAddr, (w0));
     // Write with EN=1.  This is the enable strobe.
     _i2c->write(_i2cAddr, (w0 | ENBIT));
-    // TODO: IS THIS REALLY NEEDED?  Per datasheet page 52, the 
+    // Per datasheet page 52, the 
     // minimum pulse width (PWeh) is 230ns, which seems way
     // faster than an I2C cycle.
-    //_clk->sleepUs(1);
     // Write with EN=0.  This is the trailing edge fo the enable
     // strobe.
     _i2c->write(_i2cAddr, (w0));
+}
+
+/**
+ * At the moment we are only supporting a two byte write. We create
+ * two separate 4-bit write cycles via a 6-byte sequence.
+*/
+void HD44780_PCF8574::_writeDR8Multi(const uint8_t* d, uint16_t dLen) {
+    if (dLen != 2) {
+        // TODO: ERROR/CRASH
+        return;
+    }
+    uint8_t space[6];
+    uint8_t blMask = 0;
+    if (_backLight) {
+        blMask |= BLBIT;
+    }
+    space[0] = (d[0] << 4) | blMask; 
+    space[1] = (d[0] << 4) | blMask | ENBIT;
+    space[2] = (d[0] << 4) | blMask;
+    space[3] = (d[1] << 4) | blMask; 
+    space[4] = (d[1] << 4) | blMask | ENBIT;
+    space[5] = (d[1] << 4) | blMask;
+    _i2c->write(_i2cAddr, space, 6);
 }
 
 /*
@@ -74,7 +103,8 @@ then the master will read the value of 0.
 */
 uint8_t HD44780_PCF8574::_read8(bool rsBit) {
     // Turn on the read bit and keep the 4 data bits high to 
-    // allow reading.
+    // allow reading.  Please see the PCF8574 data sheet for
+    // more information on this requirement.
     uint8_t w0 = 0b11110000 | RWBIT;
     // Turn on the backlight if requested
     if (_backLight) {

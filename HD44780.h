@@ -97,6 +97,8 @@ protected:
     */
     virtual void _writeDR8(uint8_t d) = 0;
 
+    virtual void _writeDR8Multi(const uint8_t* d, uint16_t dLen) = 0;
+
     virtual uint8_t _readDR8() = 0;
     virtual uint8_t _readIR8() = 0;
 

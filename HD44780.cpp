@@ -162,8 +162,12 @@ void HD44780::waitUntilNotBusy() {
 
 void HD44780::_writeDR(uint8_t d) {
     if (_isFourBit) {
-        _writeDR8((d & 0xf0) >> 4);
-        _writeDR8((d & 0x0f));
+        uint8_t space[2];
+        space[0] = (d & 0xf0) >> 4; 
+        space[1] = (d & 0x0f);
+        _writeDR8Multi(space, 2); 
+        //_writeDR8((d & 0xf0) >> 4);
+        //_writeDR8((d & 0x0f));
     } else {
         _writeDR8(d);
     }
