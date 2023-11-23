@@ -68,7 +68,7 @@ void HD44780_PCF8574::_writeDR8Multi(const uint8_t* d, uint16_t dLen) {
         return;
     }
     uint8_t space[6];
-    uint8_t blMask = 0;
+    uint8_t blMask = RSBIT;
     if (_backLight) {
         blMask |= BLBIT;
     }
@@ -78,6 +78,7 @@ void HD44780_PCF8574::_writeDR8Multi(const uint8_t* d, uint16_t dLen) {
     space[3] = (d[1] << 4) | blMask; 
     space[4] = (d[1] << 4) | blMask | ENBIT;
     space[5] = (d[1] << 4) | blMask;
+    
     _i2c->write(_i2cAddr, space, 6);
 }
 
